@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from '@ionic/vue-router';
 import store from "@/store";
 import routes from "@/router/routes";
 import waitForLoading from "@/methods/waitForLoading";
-import driverRedirect from "@/router/navigations/drive-redirect";
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
@@ -48,18 +47,22 @@ router.beforeEach((to, from, next)=> {
         if (isDriver && type === "user"){
           return next("/user")
         }
-        if (userDriver && isDriver){
+        if (userDriver && isDriver && isLoggedIn){
           const driverValid = store.getters["driver/isValid"];
           const isDriverSetupData = to.matched.some(r => r.name === "driver-setup-data")
+          const isSelectedCarPage = to.matched.some(r => r.name === "driver-select-car");
           console.log(driverValid,isDriverSetupData)
-          if (driverValid &&isDriverSetupData ){
-            return next("/driver/select-car")
-          }
           if (!driverValid && !isDriverSetupData){
             return next("/driver/setup-data")
           }
+          if (driverValid &&isDriverSetupData ){
+            return next("/driver/select-car")
+          }
+          if (!(!!store.state.driver.car && !!store.state.driver.driver) && !isSelectedCarPage && driverValid){
+            return next("/driver/select-car")
+          }
         }
-        if (driverRedirect(to,next,store))return
+        // if (driverRedirect(to,next,store))return
         return next();
       }
       catch (e) {

@@ -173,3 +173,11 @@ ion-modal{
   --border-radius:10px
 }
 
+ion-list{
+  ion-item{
+    margin: 5px 0;
+    item-bottom{
+      display: none;
+    }
+  }
+}

@@ -59,12 +59,12 @@ export default {
                 }]);
                 if (state.type === "driver"){
                     commit("driver/set",["data",{
-                        nf:login.nf,
-                        nb:login.nb,
-                        ls:login.ls,
-                        le:login.le,
-                        v:login.v,
-                        r:login.r,
+                        nf:login.driver.nf,
+                        nb:login.driver.nb,
+                        ls:login.driver.ls,
+                        le:login.driver.le,
+                        v:login.driver.v,
+                        r:login.driver.r,
                     }],{root:true});
 
                 }

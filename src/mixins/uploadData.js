@@ -82,7 +82,7 @@ export default {
         return null;
       }
     },
-    dataURLtoFile(dataurl, filename) {
+    dataURLtoFile(dataurl) {
       let arr = dataurl.split(","),
         mime = arr[0].match(/:(.*?);/)[1],
         bstr = atob(arr[1]),
@@ -92,9 +92,24 @@ export default {
       while (n--) {
         u8arr[n] = bstr.charCodeAt(n);
       }
-      const fileName = filename || Date.now();
+      const fileName = Date.now();
       const full_name = `${fileName}.${mime.split("/")[1]}`;
       return new File([u8arr], full_name, { type: mime });
-    }
-  }
+    },
+    fileToDataUrl(file){
+      return new Promise((resolve,reject) =>{
+        const reader = new FileReader();
+
+        reader.addEventListener("load", function () {
+          resolve(reader.result);
+        }, false);
+        reader.onerror = ev => reject(ev);
+        reader.readAsDataURL(file);
+      })
+
+    },
+    getTypeOfBase64(string){
+      return string.split(";base64")[0].replace("data:image/","");
+    },
+  },
 };
