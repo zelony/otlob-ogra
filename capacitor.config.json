@@ -1,0 +1,29 @@
+{
+  "appId": "com.codemind.otlobogra",
+  "appName": "user",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "clientId": "9323508688-v14iui19gu21u16756oes9t5aepuq5ta.apps.googleusercontent.com",
+  "androidId": "9323508688-57qdfooam5g5ciigcalv92um315vbei1.apps.googleusercontent.com",
+  "androidClientId": "9323508688-57qdfooam5g5ciigcalv92um315vbei1.apps.googleusercontent.com",
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0
+    },
+    "PrivacyScreen": {
+      "enable": true
+    },
+    "GoogleAuth": {
+      "scopes": ["profile","email"],
+      "serverClientId": "9323508688-v14iui19gu21u16756oes9t5aepuq5ta.apps.googleusercontent.com",
+      "forceCodeForRefreshToken": true
+    },
+    "PushNotifications": {
+      "presentationOptions": ["badge", "sound", "alert"]
+    },
+    "FirebaseAuthentication": {
+      "skipNativeAuth": false,
+      "providers": ["facebook.com", "phone", "google.com"]
+    }
+  }
+}

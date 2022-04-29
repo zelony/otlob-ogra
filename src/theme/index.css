@@ -1,0 +1,14 @@
+@import "../../node_modules/@ionic/vue/css/core.css";
+@import "../../node_modules/@ionic/vue/css/normalize.css";
+@import "../../node_modules/@ionic/vue/css/structure.css";
+@import "../../node_modules/@ionic/vue/css/typography.css";
+@import "../../node_modules/@ionic/vue/css/padding.css";
+@import "../../node_modules/@ionic/vue/css/float-elements.css";
+@import "../../node_modules/@ionic/vue/css/text-alignment.css";
+@import "../../node_modules/@ionic/vue/css/text-transformation.css";
+@import "../../node_modules/@ionic/vue/css/flex-utils.css";
+@import "../../node_modules/@ionic/vue/css/display.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+

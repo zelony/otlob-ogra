@@ -1,0 +1,175 @@
+.custom-item{
+  background-size: 5px;
+  border-radius: 5px;
+  --border-width:0;
+  --color:var(--ion-color-primary);
+  color:var(--ion-color-primary);
+  --background: rgba(var(--ion-color-primary-contrast-rgb),0.1)!important;
+  border: 2px solid var(--ion-color-primary);
+  &.dark{
+    --color:var(--ion-color-primary-contrast);
+    color:var(--ion-color-primary-contrast);
+    --background: rgba(var(--ion-color-primary-rgb),0.1)!important;
+    border-color: var(--ion-color-contrast);
+    &:before{
+      background: var(--ion-color-primary-contrast);
+    }
+  }
+  padding: 0;
+  margin: 5px 0;
+  transition: 1s;
+  position: relative;
+  ion-icon[slot="start"]{
+    margin-bottom: 0;
+    margin-top: 0;
+    transition: 200ms;
+    color: inherit;
+  }
+  &::before{
+    content: '';
+    height: 0;
+    background: var(--ion-color-primary);
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    transition: .5s;
+  }
+  &:hover{
+    border-width: 0;
+    color:var(--ion-color-primary-contrast);
+    --color: var(--ion-color-primary-contrast);
+    &::before{
+      height: 100%;
+    }
+    &.dark{
+      color:var(--ion-color-primary);
+      --color: var(--ion-color-primary);
+    }
+  }
+}
+.icon{
+  animation: lds-heart 1.2s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
+  visibility: visible;
+}
+@keyframes lds-heart {
+  0% {
+    transform: scale(0.95);
+  }
+  5% {
+    transform: scale(1.1);
+  }
+  39% {
+    transform: scale(0.85);
+  }
+  45% {
+    transform: scale(1);
+  }
+  60% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(0.9);
+  }
+}
+
+*{
+  visibility: initial;
+}
+.firebase-emulator-warning {
+  top: 0;
+  height: 30px;
+  width: 200px !important;
+  overflow: hidden;
+  display: none;
+}
+.center{
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  height: 100%;
+  align-items: center;
+  justify-items: center;
+}
+.wt{
+  color: white;
+}
+.absl{
+  position: absolute;
+  left: 0.1rem;
+  top: 0.1rem;
+}
+.fill{
+  height: 100%;
+  width: 100%;
+  padding: 5px;
+}
+body::-webkit-scrollbar {
+  width: 1em;
+}
+body::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: darkgrey;
+  outline: 1px solid slategrey;
+}
+ion-header::after{
+  background: none!important;
+}
+.transparent{
+  background: transparent;
+  --background: transparent;
+}
+.bottom-primary{
+  border-bottom: 2px solid var(--ion-color-primary);
+}
+
+*::-webkit-scrollbar {
+  width: 5px;
+
+  @apply bg-gray-300 rounded-lg -m-1
+}
+
+*::-webkit-scrollbar-button {
+  @apply hidden
+}
+
+*::-webkit-scrollbar-thumb {
+  color: var(--ion-color-primary);
+  background-color:var(--ion-color-primary);
+
+  @apply text-blue-500 bg-blue-500
+}
+
+body {
+  @apply min-h-screen
+}
+
+.bg-custom-gradient {
+  @apply bg-gradient-to-l from-indigo-500 via-blue-500 to-indigo-500 text-white
+}
+
+.no-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scroll {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+nav .router-link-exact-active {
+  @apply bg-blue-500 text-white hover:bg-white
+}
+
+.all-transition * {
+  @apply transition-all duration-150
+}
+
+ion-modal{
+  --ion-color-step-350:var(--ion-color-primary-contrast);
+  --border-radius:10px
+}
+

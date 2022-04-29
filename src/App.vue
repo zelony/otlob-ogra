@@ -1,131 +1,140 @@
 <template>
   <ion-app>
-    <ion-split-pane content-id="main-content">
-      <ion-menu content-id="main-content" type="overlay">
-        <ion-content>
-          <ion-list id="inbox-list">
-            <ion-list-header>Inbox</ion-list-header>
-            <ion-note>hi@ionicframework.com</ion-note>
-  
-            <ion-menu-toggle auto-hide="false" v-for="(p, i) in appPages" :key="i">
-              <ion-item @click="selectedIndex = i" router-direction="root" :router-link="p.url" lines="none" detail="false" class="hydrated" :class="{ selected: selectedIndex === i }">
-                <ion-icon slot="start" :ios="p.iosIcon" :md="p.mdIcon"></ion-icon>
-                <ion-label>{{ p.title }}</ion-label>
-              </ion-item>
-            </ion-menu-toggle>
-          </ion-list>
-  
-          <ion-list id="labels-list">
-            <ion-list-header>Labels</ion-list-header>
-  
-            <ion-item v-for="(label, index) in labels" lines="none" :key="index">
-              <ion-icon slot="start" :ios="bookmarkOutline" :md="bookmarkSharp"></ion-icon>
-              <ion-label>{{ label }}</ion-label>
-            </ion-item>
-          </ion-list>
-        </ion-content>
-      </ion-menu>
-      <ion-router-outlet id="main-content"></ion-router-outlet>
-    </ion-split-pane>
+    <ion-router-outlet/>
+    <Loading_screen/>
+    <Background_ani/>
   </ion-app>
 </template>
 
-<script lang="ts">
-import { IonApp, IonContent, IonIcon, IonItem, IonLabel, IonList, IonListHeader, IonMenu, IonMenuToggle, IonNote, IonRouterOutlet, IonSplitPane } from '@ionic/vue';
-import { defineComponent, ref } from 'vue';
-import { useRoute } from 'vue-router';
-import { archiveOutline, archiveSharp, bookmarkOutline, bookmarkSharp, heartOutline, heartSharp, mailOutline, mailSharp, paperPlaneOutline, paperPlaneSharp, trashOutline, trashSharp, warningOutline, warningSharp } from 'ionicons/icons';
+<script >
+import { defineComponent } from 'vue';
+import {IonApp, IonRouterOutlet, useIonRouter} from "@ionic/vue";
+import {initFireAuth} from "@/services/firebase/fireauth";
+import {onAuthStateChanged,getAuth,browserLocalPersistence,setPersistence} from "firebase/auth";
+import {initAppCheck} from "@/services/firebase/fireappcheck";
+import {initFunctions} from "@/services/firebase/fireFunctions";
+import { SplashScreen } from '@awesome-cordova-plugins/splash-screen';
+import messaging from "@/mixins/messaging";
+import darkTheme from "@/mixins/darkTheme";
+import i18n from "@/mixins/i18n";
+import Loading_screen from "@/components/loading";
+import waitForLoading from "@/methods/waitForLoading";
+import Background_ani from "@/components/background_animation/background_ani";
 
 export default defineComponent({
   name: 'App',
-  components: {
-    IonApp, 
-    IonContent, 
-    IonIcon, 
-    IonItem, 
-    IonLabel, 
-    IonList, 
-    IonListHeader, 
-    IonMenu, 
-    IonMenuToggle, 
-    IonNote, 
-    IonRouterOutlet, 
-    IonSplitPane,
-  },
-  setup() {
-    const selectedIndex = ref(0);
-    const appPages = [
-      {
-        title: 'Inbox',
-        url: '/folder/Inbox',
-        iosIcon: mailOutline,
-        mdIcon: mailSharp
-      },
-      {
-        title: 'Outbox',
-        url: '/folder/Outbox',
-        iosIcon: paperPlaneOutline,
-        mdIcon: paperPlaneSharp
-      },
-      {
-        title: 'Favorites',
-        url: '/folder/Favorites',
-        iosIcon: heartOutline,
-        mdIcon: heartSharp
-      },
-      {
-        title: 'Archived',
-        url: '/folder/Archived',
-        iosIcon: archiveOutline,
-        mdIcon: archiveSharp
-      },
-      {
-        title: 'Trash',
-        url: '/folder/Trash',
-        iosIcon: trashOutline,
-        mdIcon: trashSharp
-      },
-      {
-        title: 'Spam',
-        url: '/folder/Spam',
-        iosIcon: warningOutline,
-        mdIcon: warningSharp
+  components:{Background_ani, Loading_screen, IonApp,IonRouterOutlet},
+  mixins:[messaging,darkTheme,i18n],
+  setup(){
+    initFireAuth();
+    initAppCheck();
+    initFunctions();
+    return{
+      router:useIonRouter(),
+      start(){
+        // loadFonts()
+        // defineCustomElements(window)
       }
-    ];
-    const labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
-    
-    const path = window.location.pathname.split('folder/')[1];
-    if (path !== undefined) {
-      selectedIndex.value = appPages.findIndex(page => page.title.toLowerCase() === path.toLowerCase());
     }
-    
-    const route = useRoute();
-    
-    return { 
-      selectedIndex,
-      appPages, 
-      labels,
-      archiveOutline, 
-      archiveSharp, 
-      bookmarkOutline, 
-      bookmarkSharp, 
-      heartOutline, 
-      heartSharp, 
-      mailOutline, 
-      mailSharp, 
-      paperPlaneOutline, 
-      paperPlaneSharp, 
-      trashOutline, 
-      trashSharp, 
-      warningOutline, 
-      warningSharp,
-      isSelected: (url: string) => url === route.path ? 'selected' : ''
-    }
+  },
+  mounted() {
+    this.$store.dispatch("storage/create")
+    this.checkTheme();
+    SplashScreen.hide();
+    this.$nextTick(()=>{
+      this.$store.dispatch("network/start");
+      this.$store.dispatch("map/initLocationWatcher");
+      this.initGlobalization();
+      this.loginListener();
+      this.start();
+    });
+  },
+  methods:{
+    hidePage(){
+      const splits = document.getElementsByTagName('ion-split-pane');
+      if (splits.length > 0){
+        const el = splits[0];
+        el.classList.add('ion-page-hidden')
+      }
+      const tab = document.getElementById('tabs-page-handler');
+      if (tab){
+        tab.classList.add('ion-page-hidden')
+      }
+    },
+    showPage(){
+      const splits = document.getElementsByTagName('ion-split-pane');
+      if (splits.length > 0){
+        const el = splits[0];
+        el.classList.remove('ion-page-hidden')
+      }
+      const tab = document.getElementById('tabs-page-handler');
+      if (tab){
+        tab.classList.remove('ion-page-hidden')
+      }
+      // const els = document.querySelectorAll('ion-app > ion-router-outlet > ion-page');
+      // els.forEach(el => el.classList.add("ion-page-hidden"));
+    },
+    async handleLogin(user){
+      try {
+        // this.$store.commit("loading/set",["show",true]);
+        // this.$store.commit("loading/set",["text","Checking Data"]);
+        if (user) {
+
+          await this.$store.dispatch("user/initUserType");
+          const r = await this.$store.dispatch("user/login",{user});
+          if (!r)return;
+          this.$store.commit("user/set", ["loaded", true]);
+          // await this.$store.dispatch("initCheck",this.$store.state.user);
+          this.$store.dispatch("map/init");
+          this.$store.dispatch("trip/init")
+          await setPersistence(getAuth(), browserLocalPersistence);
+          await waitForLoading(()=>this.$store.state.animation.finished,200);
+          this.$store.commit("loading/set",["enabled",true]);
+          this.$store.commit("user/set", ["loaded", true]);
+          // this.showPage();
+          if (this.$route.matched.some(r => r.meta.onlyWhenLogout)) {
+            await this.router.replace(`/${this.$store.state.user.type}`)
+          }
+          this.$store.commit("animation/set",["finished",false])
+          // this.initMessaging();
+          // setCrachyliticsUserId(user.uid);
+          // enablePrivacyScreen();
+          // analyticsSetUserId(user.uid);
+          // analyticsSetCollectionEnabled(true);
+          // this.$store.dispatch("user/updateFireAuth")
+          // stopTrace("login")
+
+        } else {
+          this.$store.commit("user/set", ["loaded", true]);
+          this.$store.commit("loading/set", ["enabled", false]);
+          // await analyticsSetCollectionEnabled(false);
+          await this.$store.commit('user/set',["user",{}]);
+          await this.$store.dispatch("storage/removeAll");
+          // this.hidePage();
+          if (!this.$route.matched.some(r => r.meta.onlyWhenLogout)) {
+            this.router.replace('/login')
+          }
+        }
+        // this.$store.commit("loading/set",["show",false]);
+        // sendUnsentReports();
+      } catch (e) {
+        this.$store.commit("toast/error", e);
+      }
+    },
+    async loginListener(){
+      onAuthStateChanged(
+          getAuth(),
+          async user => {
+           this.handleLogin(user);
+          },
+          e => this.$store.commit("toast/error", e)
+      );
+    },
   }
 });
 </script>
 
-<style scoped>
+<style>
 ion-menu ion-content {
   --background: var(--ion-item-background, var(--ion-background-color, #fff));
 }

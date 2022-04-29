@@ -1,0 +1,26 @@
+.divider{
+  background:var(--ion-color-primary-contrast)!important;
+  box-shadow: 0 0 23px 3px var(--ion-color-primary-contrast);
+}
+.card{
+  box-shadow:none;
+}
+//.grecaptcha-badge {
+//  visibility: hidden;
+//}
+#sign-in-button{
+  bottom: 70px;
+  position: fixed;
+}
+//#ssIFrame_google ~ div[visibility="hidden"] > div{
+//  z-index: -11111111111111111111111!important;
+//  width: 0!important;
+//}
+body > div:not(.swal2-container):not(#app){
+  z-index: -1111!important;
+  width: 0!important;
+  border: 0!important;
+}
+.auth_button{
+  display: block;
+}
